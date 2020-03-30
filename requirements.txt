@@ -2,3 +2,7 @@ discord
 pandas
 matplotlib
 praw
+numpy
+config
+google
+requests
