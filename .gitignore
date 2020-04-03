@@ -1,3 +1,7 @@
 
 config.py
 *.pyc
+
+build/
+dist/
+*.egg-info/

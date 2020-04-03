@@ -1,4 +1,3 @@
 discord
 matplotlib
 pandas
-praw
