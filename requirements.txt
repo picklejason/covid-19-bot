@@ -1,4 +1,4 @@
 discord
-pandas
 matplotlib
+pandas
 praw
