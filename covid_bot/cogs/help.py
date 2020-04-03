@@ -5,20 +5,16 @@ from discord.ext import commands
 
 from covid_bot.const import (
     HELP_DESCRIPTION, HELP_DONATE, HELP_GRAPH, HELP_INFO, HELP_INVITE,
-    HELP_REDDIT, HELP_SAUCE, HELP_STAT
+    HELP_SAUCE, HELP_STAT
 )
 from covid_bot.utils.codes import EMOJI_CODES
 from covid_bot.utils.time import utcnow
 
-logger = logging.getLogger('covid-19')
+logger = logging.getLogger(__name__)
 
 BOT_INFO = (
  'Additional information about the bot | '
  'Use **.c help** for more info on commands \n'
-)
-SUPPORT = (
-    f'{EMOJI_CODES["discord"]} '
-    'Join the [Support Server](https://discord.gg/tVN2UTa)!'
 )
 
 
@@ -52,18 +48,8 @@ class Help(commands.Cog):
             value=HELP_GRAPH,
         )
         embed.add_field(
-            name='```.c reddit <category>```',
-            value=HELP_REDDIT,
-            inline=False,
-        )
-        embed.add_field(
             name='```.c info```',
             value=HELP_INFO,
-            inline=False,
-        )
-        embed.add_field(
-            name='```.c support```',
-            value='Return invite link to support server',
             inline=False,
         )
         # If you self host this bot or use any part of this source code,
@@ -99,15 +85,6 @@ class Help(commands.Cog):
         embed.add_field(name='Bot Source Code', value=HELP_SAUCE)
         embed.add_field(name='Bot Invite', value=HELP_INVITE)
         embed.add_field(name='Donate', value=HELP_DONATE)
-        await ctx.send(embed=embed)
-
-    @commands.command(name='support', aliases=['server'])
-    @commands.cooldown(3, 10, commands.BucketType.user)
-    async def support(self, ctx):
-        embed = discord.Embed(
-            description=SUPPORT,
-            colour=discord.Colour.red(),
-        )
         await ctx.send(embed=embed)
 
     @commands.command()
@@ -149,8 +126,8 @@ class Help(commands.Cog):
             await ctx.send('Reloaded All')
         else:
             # XXX: Make sure these didn't get broken in the move
-            self.bot.unload_extension(f'cogs.{extension.title()}')
-            self.bot.load_extension(f'cogs.{extension.title()}')
+            self.bot.unload_extension(f'covid_bot.cogs.{extension.title()}')
+            self.bot.load_extension(f'covid_bot.cogs.{extension.title()}')
             await ctx.send(f'Reloaded {extension.title()}')
 
 

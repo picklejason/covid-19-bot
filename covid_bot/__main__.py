@@ -1,8 +1,8 @@
 import asyncio
 import logging
+import os
 import pkgutil
 
-import config
 import discord
 from discord.ext import commands
 from discord.ext.commands import when_mentioned_or
@@ -13,7 +13,6 @@ from covid_bot.const import (
     HELLO_MESSAGE, HELP_DONATE, HELP_INVITE, HELP_SAUCE, ICON_URL
 )
 from covid_bot.utils.codes import EMOJI_CODES
-from covid_bot.utils.time import utcnow
 
 logger = logging.getLogger(__name__)
 
@@ -74,24 +73,13 @@ class Coronavirus(commands.AutoShardedBot):
                     name=f'{len(bot.guilds)} servers | .c help',
                 ),
             )
-            self.unload_extension('cogs.Stats')
-            self.load_extension('cogs.Stats')
+            self.unload_extension('covid_bot.cogs.stats')
+            self.load_extension('covid_bot.cogs.stats')
             logger.info('Reloaded Stats')
             await asyncio.sleep(600)
 
     async def on_guild_join(self, guild: discord.Guild):
         general = find(lambda x: x.name == 'general', guild.text_channels)
-        channel = bot.get_channel(686768403339542687)
-        embed_join = discord.Embed(
-            description=(
-                f'Joined server **{guild.name}** with '
-                f'**{len(guild.members)}** members | '
-                f'Total: **{len(self.guilds)}** servers'
-            ),
-            colour=discord.Colour.green(),
-            timestamp=utcnow(),
-        )
-        await channel.send(embed=embed_join)
         if general and general.permissions_for(guild.me).send_messages:
             embed = discord.Embed(
                 description=HELLO_MESSAGE,
@@ -136,22 +124,9 @@ class Coronavirus(commands.AutoShardedBot):
             embed.set_footer(text='Made by PickleJason#5293')
             await general.send(embed=embed)
 
-    async def on_guild_remove(self, guild: discord.Guild):
-        channel = bot.get_channel(686768403339542687)
-        embed_leave = discord.Embed(
-            description=(
-                f'Left server **{guild.name}** with '
-                f'**{len(guild.members)}** members | '
-                'Total: **{len(self.guilds)}** servers'
-            ),
-            colour=discord.Colour.red(),
-            timestamp=utcnow(),
-        )
-        await channel.send(embed=embed_leave)
-
 
 if __name__ == '__main__':
     handler = configure_logging()
     bot = Coronavirus()
-    bot.run(config.token)
+    bot.run(os.environ['DISCORD_TOKEN'])
     handler.doRollover()

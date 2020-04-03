@@ -27,18 +27,12 @@ HELP_GRAPH = (
  'graph type and case type | Same rules for country names apply \n'
  '__Example:__ **.c graph log deaths nl deu ita usa chn kor jpn esp**'
 )
-HELP_REDDIT = (
- 'Return posts of given category from '
- '[r/Coronavirus](https://www.reddit.com/r/Coronavirus/)\n'
- 'Shows 5 posts at a time (up to first 15) Use ⬅️ and ➡️ to scroll through\n'
- '**<category>** - `Hot` | `New` | `Top`'
-)
 HELP_INFO = (
  'Return additional info about the bot such as server and user count'
 )
 HELP_SAUCE = (
  f'{EMOJI_CODES["github"]} '
- '[Github](https://github.com/picklejason/coronavirus-bot)'
+ '[Github](https://github.com/jwiggins/coronavirus-bot)'
 )
 HELP_INVITE = (
  f'{EMOJI_CODES["discord"]} '
