@@ -163,7 +163,7 @@ class Stats(commands.Cog):
 		""" embed stats for a given country / all countries into discord.Embed
 		object and send to channel
 		"""
-		response = self._response_template(f'**COVID-19 stats for {country.title()}**')
+		response = self._response_template(f'**COVID-19 stats for {location.title()}**')
 		try:
 			info = self._get_country_today(location)
 		except Exception as e:
@@ -188,7 +188,7 @@ class Stats(commands.Cog):
 		response = self._response_template(f'**COVID-19 leaderboard sorted by "{sorting}"**')
 		if sorting in C_KEYS:
 			countries = self._get_top_countries(sorted_by=sorting)
-			info = "\n".join([f'**{i+1}: {k["country"]}**\n{k[sorting]}' for i, k in zip(range(len(countries)), countries)])
+			info = "\n".join([f'**{i+1}: {k["country"]}**\n{k[sorting]}' for i, k in enumerate(countries)])
 			response['content'].append(
 				{
 					'name'	:	'Top 10 Countries:',
