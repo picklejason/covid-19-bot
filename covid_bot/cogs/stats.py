@@ -198,7 +198,7 @@ class Stats(commands.Cog):
 		else:
 			response['content'].append(
 				{
-					'name'	:	'error:'
+					'name'	:	'error:',
 					'value'	:	f'Bad key "{sorting}"'
 				}
 			)	
@@ -213,5 +213,5 @@ if __name__ == '__main__':
 	# DEBUG and testing
 	import code
 	s = Stats(None)
-	s.leaderboard(None)
+	#s.leaderboard(None)
 	#code.interact(local=dict(globals(), **locals()))
