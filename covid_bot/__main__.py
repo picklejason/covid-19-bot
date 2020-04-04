@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import logging.handlers
 import os
@@ -25,7 +24,7 @@ def configure_logging():
     )
 
     file_handler = logging.handlers.RotatingFileHandler(
-        filename='covid.log', mode='w', backupCount=10
+        filename='covid.log', mode='w', backupCount=3
     )
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(formatter)
@@ -67,18 +66,12 @@ class Coronavirus(commands.Bot):
 
     async def on_ready(self):
         await self.wait_until_ready()
-        while True:
-            await bot.change_presence(
-                activity=discord.Activity(
-                    type=discord.ActivityType.watching,
-                    name=f'{len(bot.guilds)} servers | {BOT_SHORT_NAME} help',
-                ),
-            )
-            # Reload the stats Cog every 10 minutes
-            await asyncio.sleep(600)
-            self.unload_extension('covid_bot.cogs.stats')
-            self.load_extension('covid_bot.cogs.stats')
-            logger.info('Reloaded Stats')
+        await bot.change_presence(
+            activity=discord.Activity(
+                type=discord.ActivityType.watching,
+                name=f'{len(bot.guilds)} servers | {BOT_SHORT_NAME} help',
+            ),
+        )
 
     async def on_guild_join(self, guild: discord.Guild):
         channel = find(lambda x: x.name == MAIN_CHANNEL, guild.text_channels)

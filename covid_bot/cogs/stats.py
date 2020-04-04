@@ -158,7 +158,7 @@ class Stats(commands.Cog):
 	#														#
 	#########################################################
 
-	@commands.command(name='stat')
+	@commands.command(name='stats', aliases=['stat'])
 	async def stats(self, context, location: str):
 		""" embed stats for a given country / all countries into discord.Embed
 		object and send to channel
@@ -169,7 +169,7 @@ class Stats(commands.Cog):
 		except Exception as e:
 			response['content'].append({'name': 'error', 'value': str(e)})
 		else:
-			for k, v in info:
+			for k, v in info.items():
 				if k == 'country':	# don't add country lol
 					continue
 				response['content'].append(

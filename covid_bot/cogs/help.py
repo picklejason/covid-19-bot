@@ -4,16 +4,15 @@ import discord
 from discord.ext import commands
 
 from covid_bot.const import (
-    BOT_SHORT_NAME, HELP_DESCRIPTION, HELP_GRAPH, HELP_INFO, HELP_SAUCE,
-    HELP_STAT
+    BOT_SHORT_NAME, HELP_DESCRIPTION, HELP_INFO, HELP_LEADERBOARD,
+    HELP_SAUCE, HELP_STAT
 )
-from covid_bot.utils.codes import EMOJI_CODES
 from covid_bot.utils.time import utcnow
 
 logger = logging.getLogger(__name__)
 
 BOT_INFO = (
- 'Additional information about the bot | '
+ 'Additional information about the bot\n'
  f'Use **{BOT_SHORT_NAME} help** for more info on commands \n'
 )
 
@@ -38,14 +37,13 @@ class Help(commands.Cog):
             timestamp=utcnow(),
         )
         embed.add_field(
-            name=f'```{BOT_SHORT_NAME} stat <country/all> <state>```',
+            name=f'```{BOT_SHORT_NAME} stat [country|all] [state]```',
             value=HELP_STAT,
             inline=False,
         )
         embed.add_field(
-            name=(f'```{BOT_SHORT_NAME} graph <linear/log> '
-                  '<confirmed/recovered/deaths> <country names>```'),
-            value=HELP_GRAPH,
+            name=(f'```{BOT_SHORT_NAME} [leaderboard|lb] ```'),
+            value=HELP_LEADERBOARD,
         )
         embed.add_field(
             name=f'```{BOT_SHORT_NAME} info```',
@@ -66,7 +64,7 @@ class Help(commands.Cog):
         )
         embed.add_field(
             name='Command Prefix',
-            value=f'`{BOT_SHORT_NAME}` or `@mention`'
+            value=f'`{BOT_SHORT_NAME} ` or `@mention`'
         )
 
         users = self.total_users()
