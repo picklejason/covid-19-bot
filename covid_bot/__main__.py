@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import logging.handlers
 import os
 import pkgutil
 
@@ -10,11 +11,11 @@ from discord.utils import find
 
 import covid_bot.cogs as cogs
 from covid_bot.const import (
-    HELLO_MESSAGE, HELP_DONATE, HELP_INVITE, HELP_SAUCE, ICON_URL
+    BOT_LONG_NAME, BOT_SHORT_NAME, HELLO_MESSAGE, ICON_URL
 )
-from covid_bot.utils.codes import EMOJI_CODES
 
 logger = logging.getLogger(__name__)
+MAIN_CHANNEL = os.environ.get('DISCORD_BOT_CHANNEL', 'general')
 
 
 def configure_logging():
@@ -40,7 +41,7 @@ class Coronavirus(commands.AutoShardedBot):
     """
     def __init__(self):
         super().__init__(
-            command_prefix=when_mentioned_or('.c '),
+            command_prefix=when_mentioned_or(BOT_SHORT_NAME),
             activity=discord.Game(name='Loading...'),
         )
         self.remove_command('help')
@@ -51,7 +52,7 @@ class Coronavirus(commands.AutoShardedBot):
             name = info.name
             try:
                 self.load_extension(name)
-                logger.info(f'{name} loaded successfully')
+                logger.debug(f'{name} loaded successfully')
             except Exception:
                 logger.exception(f'{name} failed to load')
 
@@ -60,7 +61,7 @@ class Coronavirus(commands.AutoShardedBot):
             name = info.name
             try:
                 self.unload_extension(name)
-                logger.info(f'{name} unloaded successfully')
+                logger.debug(f'{name} unloaded successfully')
             except Exception:
                 logger.exception(f'{name} failed to unload')
 
@@ -70,59 +71,33 @@ class Coronavirus(commands.AutoShardedBot):
             await bot.change_presence(
                 activity=discord.Activity(
                     type=discord.ActivityType.watching,
-                    name=f'{len(bot.guilds)} servers | .c help',
+                    name=f'{len(bot.guilds)} servers | {BOT_SHORT_NAME} help',
                 ),
             )
+            # Reload the stats Cog every 10 minutes
+            await asyncio.sleep(600)
             self.unload_extension('covid_bot.cogs.stats')
             self.load_extension('covid_bot.cogs.stats')
             logger.info('Reloaded Stats')
-            await asyncio.sleep(600)
 
     async def on_guild_join(self, guild: discord.Guild):
-        general = find(lambda x: x.name == 'general', guild.text_channels)
-        if general and general.permissions_for(guild.me).send_messages:
+        channel = find(lambda x: x.name == MAIN_CHANNEL, guild.text_channels)
+        if channel and channel.permissions_for(guild.me).send_messages:
             embed = discord.Embed(
                 description=HELLO_MESSAGE,
                 colour=discord.Colour.red()
             )
             embed.set_author(
-                name='Coronavirus (COVID-19)',
-                url='https://discord.gg/tVN2UTa',
+                name=f'{BOT_LONG_NAME}',
+                url='https://github.com/jwiggins/coronavirus-bot/',
                 icon_url=ICON_URL,
             )
             embed.add_field(
                 name='Command Prefix',
-                value='`.c ` or `@mention`',
+                value=f'`{BOT_SHORT_NAME} ` or `@mention`',
             )
-            users = 0
-            for s in self.guilds:
-                users += len(s.members)
-
-            embed.add_field(
-                name='Servers | Shards',
-                value=(
-                    f'{EMOJI_CODES["server"]} '
-                    f'{len(self.guilds)} | {len(self.shards)}'
-                ),
-            )
-            embed.add_field(
-                name='Users',
-                value=f'{EMOJI_CODES["user"]} {users}',
-            )
-            embed.add_field(
-                name='Bot Source Code',
-                value=HELP_SAUCE,
-            )
-            embed.add_field(
-                name='Bot Invite',
-                value=HELP_INVITE,
-            )
-            embed.add_field(
-                name='Donate',
-                value=HELP_DONATE,
-            )
-            embed.set_footer(text='Made by PickleJason#5293')
-            await general.send(embed=embed)
+            embed.set_footer(text='Made by PickleJason#5293 and Arsonist Cult')
+            await channel.send(embed=embed)
 
 
 if __name__ == '__main__':

@@ -4,8 +4,8 @@ import discord
 from discord.ext import commands
 
 from covid_bot.const import (
-    HELP_DESCRIPTION, HELP_DONATE, HELP_GRAPH, HELP_INFO, HELP_INVITE,
-    HELP_SAUCE, HELP_STAT
+    BOT_SHORT_NAME, HELP_DESCRIPTION, HELP_GRAPH, HELP_INFO, HELP_SAUCE,
+    HELP_STAT
 )
 from covid_bot.utils.codes import EMOJI_CODES
 from covid_bot.utils.time import utcnow
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 BOT_INFO = (
  'Additional information about the bot | '
- 'Use **.c help** for more info on commands \n'
+ f'Use **{BOT_SHORT_NAME} help** for more info on commands \n'
 )
 
 
@@ -38,29 +38,24 @@ class Help(commands.Cog):
             timestamp=utcnow(),
         )
         embed.add_field(
-            name='```.c stat <country/all> <state>```',
+            name=f'```{BOT_SHORT_NAME} stat <country/all> <state>```',
             value=HELP_STAT,
             inline=False,
         )
         embed.add_field(
-            name=('```.c graph <linear/log> <confirmed/recovered/deaths> '
-                  '<country names>```'),
+            name=(f'```{BOT_SHORT_NAME} graph <linear/log> '
+                  '<confirmed/recovered/deaths> <country names>```'),
             value=HELP_GRAPH,
         )
         embed.add_field(
-            name='```.c info```',
+            name=f'```{BOT_SHORT_NAME} info```',
             value=HELP_INFO,
             inline=False,
         )
-        # If you self host this bot or use any part of this source code,
-        # I would be grateful if you leave this in or credit me somewhere else
         embed.add_field(name='Bot Source Code', value=HELP_SAUCE)
-        embed.add_field(name='Bot Invite', value=HELP_INVITE)
-        embed.add_field(name='Donate', value=HELP_DONATE)
         await ctx.send(embed=embed)
 
-    @commands.command(name='info',
-                      aliases=['about', 'vote', 'invite', 'donate'])
+    @commands.command(name='info', aliases=['about'])
     @commands.cooldown(3, 10, commands.BucketType.user)
     async def info(self, ctx):
         embed = discord.Embed(
@@ -69,22 +64,21 @@ class Help(commands.Cog):
             colour=discord.Colour.red(),
             timestamp=utcnow()
         )
-        embed.add_field(name='Command Prefix', value='`.c` or `@mention`')
+        embed.add_field(
+            name='Command Prefix',
+            value=f'`{BOT_SHORT_NAME}` or `@mention`'
+        )
+
         users = self.total_users()
         embed.add_field(
-            name='Servers | Shards',
-            value=(
-                f'{EMOJI_CODES["server"]} '
-                f'{len(self.bot.guilds)} | {len(self.bot.shards)}'
-            ),
+            name='Servers',
+            value=f'{EMOJI_CODES["server"]} {len(self.bot.guilds)}',
         )
         embed.add_field(
             name='Users',
             value=f'{EMOJI_CODES["user"]} {users}'
         )
         embed.add_field(name='Bot Source Code', value=HELP_SAUCE)
-        embed.add_field(name='Bot Invite', value=HELP_INVITE)
-        embed.add_field(name='Donate', value=HELP_DONATE)
         await ctx.send(embed=embed)
 
     @commands.command()

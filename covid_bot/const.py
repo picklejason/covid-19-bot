@@ -1,7 +1,15 @@
+import os
+
 from covid_bot.utils.codes import EMOJI_CODES
 
+# These names are used throughout
+BOT_SHORT_NAME = os.environ.get('DISCORD_BOT_SHORT_NAME', '.cov')
+BOT_LONG_NAME = os.environ.get('DISCORD_BOT_LONG_NAME', 'COVID-19')
+
+
 HELLO_MESSAGE = (
- 'Thanks for inviting me! | Use **.c help** for more info on commands'
+ f'Thanks for inviting me! | Use **{BOT_SHORT_NAME} help** for more info on '
+ 'commands'
 )
 
 HELP_DESCRIPTION = (
@@ -14,18 +22,22 @@ HELP_STAT = (
  'React with 📈 for a linear graph or 📉 for a log graph\n'
  '•For any country you may type the **full name** or '
  '**[ISO 3166-1 codes](https://en.wikipedia.org/wiki/ISO_3166-1)**\n'
- '__Example:__ **.c stat Italy** | **.c stat IT** | **.c stat ITA**\n'
+ f'__Example:__ **{BOT_SHORT_NAME} stat Italy** | **{BOT_SHORT_NAME} stat IT**'
+ f' | **{BOT_SHORT_NAME} stat ITA**\n'
  '•If the country or state\'s full name is two words, enclose them in '
  '**quotation marks**\n'
- '__Example:__ **.c stat "South Korea"** | **.c stat US "New York"**\n'
+ f'__Example:__ **{BOT_SHORT_NAME} stat "South Korea"** | '
+ f'**{BOT_SHORT_NAME} stat US "New York"**\n'
  '•If you would like stats on a specific **state (full name or abbreviated)** '
  'in the US, put it after the country name\n'
- '__Example:__ **.c stat US California** or **.c stat US CA**'
+ f'__Example:__ **{BOT_SHORT_NAME} stat US California** or '
+ f'**{BOT_SHORT_NAME} stat US CA**'
 )
 HELP_GRAPH = (
  'Display graph for a single country or multiple countries, choose between '
  'graph type and case type | Same rules for country names apply \n'
- '__Example:__ **.c graph log deaths nl deu ita usa chn kor jpn esp**'
+ f'__Example:__ **{BOT_SHORT_NAME} graph log deaths '
+ 'nl deu ita usa chn kor jpn esp**'
 )
 HELP_INFO = (
  'Return additional info about the bot such as server and user count'
@@ -34,12 +46,4 @@ HELP_SAUCE = (
  f'{EMOJI_CODES["github"]} '
  '[Github](https://github.com/jwiggins/coronavirus-bot)'
 )
-HELP_INVITE = (
- f'{EMOJI_CODES["discord"]} '
- '[Link](https://discordapp.com/api/oauth2/authorize?client_id=683462722368700526&permissions=59456&scope=bot)'  # noqa: E501
-)
-HELP_DONATE = (
- f'{EMOJI_CODES["kofi"]} [Ko-fi](https://ko-fi.com/picklejason)'
-)
-
 ICON_URL = 'https://images.discordapp.net/avatars/683462722368700526/70c1743a2d87a44116f857a88bb107e0.png?size=512'  # noqa: E501

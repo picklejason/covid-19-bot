@@ -4,3 +4,6 @@
 build/
 dist/
 *.egg-info/
+
+VARIABLES
+covid.log*
