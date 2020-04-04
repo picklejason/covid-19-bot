@@ -40,7 +40,9 @@ class Coronavirus(commands.Bot):
     """
     def __init__(self):
         super().__init__(
-            command_prefix=when_mentioned_or(f'{BOT_SHORT_NAME} '),
+            command_prefix=when_mentioned_or(
+                f'{BOT_SHORT_NAME} ', f'{BOT_SHORT_NAME.title()} '
+            ),
             activity=discord.Game(name='Loading...'),
         )
         self.remove_command('help')
