@@ -5,18 +5,11 @@ import requests
 import discord
 from discord.ext import commands
 
+from covid_bot.utils.graphing import Graph
+
 API_GATEWAY = "https://api.coronastatistics.live/"
 # country dict keys
 C_KEYS = ['cases', 'todayCases', 'deaths', 'todayDeaths', 'recovered', 'active', 'critical', 'casesPerOneMillion', 'deathsPerOneMillion']
-HEADERS = {
-	'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:70.0) Gecko/20100101 Firefox/70.0',  # noqa: E501
-	'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',  # noqa: E501
-	'Accept-Language': 'en-US,en;q=0.5',
-	'DNT': '1',
-	'Connection': 'keep-alive',
-	'Referer': '',
-	'Upgrade-Insecure-Requests': '1',
-}
 
 
 class Stats(commands.Cog):
@@ -49,16 +42,24 @@ class Stats(commands.Cog):
 		self._session.mount('https://', adapter)
 		self._session.mount('http://', adapter)
 
-	def _make_country_list(self, country):
+	def _get_country_list(self):
 		""" TODO """
-		pass
+		content = self._get_countries_table()
+		countries = [i['country'] for i in content if 'country' in i]
+		return countries
 
-	def _get_global_timeline(self, country):
-		""" TODO """
-		pass
+	def _get_global_timeline(self):
+		""" gets the timeline of cases/deaths/recovered for global """
+		return self._fetch_from_gateway('timeline', 'global')
+
+	def _plot_timeline(self, timeline, log=False, **kwargs):
+		""" plots a timeline """
+		g = Graph(timeline, log=log)
+		g.plot_all()
+		return g.save()
 
 	def _get_country_timeline(self, country):
-		""" TODO """
+		""" gets the timeline of cases/deaths/recovered for country """
 		pass
 
 	def _get_country_today(self, country):
@@ -204,14 +205,21 @@ class Stats(commands.Cog):
 			)	
 		await context.send(embed=self._embed_response(**response))
 
+	@commands.command(name='plot')
+	async def plot(self, context, country='all'):
+		""" make and send the desired plot
+		"""
+		response = self._response_template(f'**COVID-19 Graph for "{country}"**')
+		if country is 'all':
+			timeline = self._get_global_timeline()
+			img = self._plot_timeline(timeline)
+		else:
+			img = None
+		await context.send(
+			file=discord.File(img, filename=f'image.png'),
+			embed=self._embed_response(**response)
+		)
+
 
 def setup(bot):
 	bot.add_cog(Stats(bot))
-
-
-if __name__ == '__main__':
-	# DEBUG and testing
-	import code
-	s = Stats(None)
-	#s.leaderboard(None)
-	#code.interact(local=dict(globals(), **locals()))
