@@ -36,12 +36,12 @@ def configure_logging():
     return file_handler
 
 
-class Coronavirus(commands.AutoShardedBot):
+class Coronavirus(commands.Bot):
     """ This is the main bot class
     """
     def __init__(self):
         super().__init__(
-            command_prefix=when_mentioned_or(BOT_SHORT_NAME),
+            command_prefix=when_mentioned_or(f'{BOT_SHORT_NAME} '),
             activity=discord.Game(name='Loading...'),
         )
         self.remove_command('help')

@@ -72,11 +72,11 @@ class Help(commands.Cog):
         users = self.total_users()
         embed.add_field(
             name='Servers',
-            value=f'{EMOJI_CODES["server"]} {len(self.bot.guilds)}',
+            value=f'{len(self.bot.guilds)}',
         )
         embed.add_field(
             name='Users',
-            value=f'{EMOJI_CODES["user"]} {users}'
+            value=f'{users}'
         )
         embed.add_field(name='Bot Source Code', value=HELP_SAUCE)
         await ctx.send(embed=embed)

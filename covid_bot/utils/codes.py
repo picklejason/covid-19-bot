@@ -587,12 +587,7 @@ JHU_NAMES_VALUES = set(JHU_NAMES.values())
 
 # Magical Emoji codes used for embeds
 EMOJI_CODES = {
-    'discord': '<:discord:689486285349715995>',
-    'github': '<:github:689501322969350158>',
-    'kofi': '<:Kofi:689483361785217299>',
-    'server': '<:servers:689502498251341953>',
-    'upvote': '<:upvote:689186080070959207>',
-    'user': '<:user:689502620590669912>',
+    'github': '<:github:695974382761279498>',
 
     # extra
     'confirmed': '<:confirmed:689494326493184090>',
