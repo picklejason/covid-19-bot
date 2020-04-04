@@ -60,7 +60,15 @@ class Stats(commands.Cog):
 
 	def _get_country_timeline(self, country):
 		""" gets the timeline of cases/deaths/recovered for country """
-		pass
+		content = self._fetch_from_gateway('timeline', country)['data']
+		data = {}
+		for i in content['timeline']:
+			data[i['date']] = {
+				'cases'		:	i['cases'],
+				'recovered'	:	i['recovered'],
+				'deaths'	:	i['deaths']
+			}
+		return data
 
 	def _get_country_today(self, country):
 		""" Get a dictionary object containing all of the information for today
@@ -124,39 +132,7 @@ class Stats(commands.Cog):
 		}
 
 	#########################################################
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
 	#   ------------- ASYNC EVENT ENDPOINTS -------------   #
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#														#
-	#											:P			#
-	#														#
 	#########################################################
 
 	@commands.command(name='stats', aliases=['stat'])
@@ -210,11 +186,24 @@ class Stats(commands.Cog):
 		""" make and send the desired plot
 		"""
 		response = self._response_template(f'**COVID-19 Graph for "{country}"**')
+
 		if country is 'all':
 			timeline = self._get_global_timeline()
 			img = self._plot_timeline(timeline)
 		else:
-			img = None
+			try:
+				timeline = self._get_country_timeline(country)
+			except:
+				response['content'].append(
+					{
+						'name'	:	'error:',
+						'value'	:	f'Bad country "{country}"'
+					}
+				)
+				img = None
+			else:
+				img = self._plot_timeline(timeline)
+
 		await context.send(
 			file=discord.File(img, filename=f'image.png'),
 			embed=self._embed_response(**response)

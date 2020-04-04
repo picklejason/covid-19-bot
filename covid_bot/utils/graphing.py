@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt 
 import matplotlib.dates as mdates
 from matplotlib import rc as pRC
+import matplotlib as mpl
 import numpy as np 
 
 import datetime as dt
@@ -10,6 +11,13 @@ from io import BytesIO
 # graph choices
 G_CHOICES = ['cases', 'deaths', 'recovered', 'all']
 COLOURS = ['lightblue', 'red', 'lightgreen']
+
+# set colours of foreground objects
+COLOUR = (0.6, 0.6, 0.6, 1)
+mpl.rcParams['text.color'] = COLOUR
+mpl.rcParams['axes.labelcolor'] = COLOUR
+mpl.rcParams['xtick.color'] = COLOUR
+mpl.rcParams['ytick.color'] = COLOUR
 
 
 class Graph:
@@ -49,13 +57,16 @@ class Graph:
 	def _format_axis(self):
 		""" formats the axis properly """
 		fig = plt.figure(dpi=150)
+		# make figure grey
+		fig.patch.set_facecolor((0.15, 0.15, 0.15, 1))
 		ax = plt.gca()
-
-		#plt.style.use('dark_background')
 
 		ax.yaxis.grid()
 		ax.xaxis.set_major_formatter(mdates.DateFormatter('%d/%m'))
 		ax.xaxis.set_major_locator(mdates.DayLocator(interval=7))
+
+		# axis transparent
+		ax.set_facecolor((1, 1, 1, 0))
 
 		# get rid of the spines
 		for loc in ['top', 'right', 'left']:
@@ -76,7 +87,7 @@ class Graph:
 		# write image to buffer
 		pRC('savefig', format='png')
 		buf = BytesIO()
-		plt.savefig(buf)
+		plt.savefig(buf, facecolor=self.fig.get_facecolor(), edgecolor='none')
 		buf.seek(0)
 
 		# tear down
