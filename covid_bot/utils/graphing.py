@@ -58,7 +58,7 @@ class Graph:
 		""" formats the axis properly """
 		fig = plt.figure(dpi=150)
 		# make figure grey
-		fig.patch.set_facecolor((0.15, 0.15, 0.15, 1))
+		fig.patch.set_facecolor((0.15, 0.15, 0.15, 0.0))
 		ax = plt.gca()
 
 		ax.yaxis.grid()

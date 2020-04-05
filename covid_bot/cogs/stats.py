@@ -7,6 +7,7 @@ from discord.ext import commands
 
 from covid_bot.const import BOT_SHORT_NAME
 from covid_bot.utils.codes import normalize_country_name
+from covid_bot.utils.formatting import stats_formatter, value_formatter
 from covid_bot.utils.graphing import Graph
 from covid_bot.utils.help import add_help
 
@@ -193,11 +194,12 @@ class Stats(commands.Cog):
 					continue
 				response['content'].append(
 					{
-						'name'	:	k.title(),
+						'name'	:	k,
 						'value' :	v
 					}
 				)
 
+		response = stats_formatter(response)
 		await context.send(embed=self._embed_response(**response))
 
 	@commands.command(name='leaderboard', aliases=['lb', 'leadboard', 'lboard'])
@@ -207,7 +209,10 @@ class Stats(commands.Cog):
 		response = self._response_template(f'**COVID-19 leaderboard sorted by "{sorting}"**')
 		if sorting in C_KEYS:
 			countries = self._get_top_countries(sorted_by=sorting)
-			info = "\n".join([f'**{i+1}: {k["country"]}**\n{k[sorting]}' for i, k in enumerate(countries)])
+			info = '\n'.join(
+				f'**{i+1}: {k["country"]}** - {value_formatter(k[sorting])}'
+				for i, k in enumerate(countries)
+			)
 			response['content'].append(
 				{
 					'name'	:	'Top 10 Countries:',
@@ -224,19 +229,23 @@ class Stats(commands.Cog):
 		await context.send(embed=self._embed_response(**response))
 
 	@commands.command(name='plot')
-	async def plot(self, context, country='all', *extra):
+	async def plot(self, context, *args):
 		""" make and send the desired plot
 		"""
-		if country is 'all':
+		log_plot = False
+		if args and args[0] in ('log', 'lin', 'linear', 'logarithmic'):
+			if args[0] in ('log', 'logarithmic'):
+				log_plot = True
+			args = args[1:]
+
+		# Build a single string for the country name
+		country = ' '.join(args)
+		if country == '':
 			response = self._response_template('**COVID-19 Graph for World**')
 			timeline = self._get_global_timeline()
-			img = self._plot_timeline(timeline)
+			img = self._plot_timeline(timeline, log=log_plot)
 		else:
-			if extra:
-				# Build a single string for the country name
-				country = ' '.join((country,) + extra)
 			country = normalize_country_name(country)
-
 			response = self._response_template(
 				f'**COVID-19 Graph for "{country}"**'
 			)
@@ -251,7 +260,7 @@ class Stats(commands.Cog):
 				)
 				img = None
 			else:
-				img = self._plot_timeline(timeline)
+				img = self._plot_timeline(timeline, log=log_plot)
 
 		# Don't send images that don't exist
 		kwargs = {}
