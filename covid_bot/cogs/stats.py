@@ -151,6 +151,8 @@ class Stats(commands.Cog):
 		return resp
 
 	def _embed_response(self, *args, **kwargs):
+		""" embeds the adjusted response template into a discord.Embed object 
+		"""
 		embed = discord.Embed(
 			description=kwargs['description'],
 			colour=discord.Colour.red()
@@ -164,6 +166,8 @@ class Stats(commands.Cog):
 		return embed
 
 	def _response_template(self, descr):
+		""" standard response template
+		"""
 		return {
 			'description': descr,
 			'content': []
