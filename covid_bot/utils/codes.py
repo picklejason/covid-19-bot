@@ -352,6 +352,7 @@ PLOT_NAMES = {
  'KR': 'Korea, South',
  'VC': 'Saint Vincent and the Grenadines',
  'TW': 'Taiwan*',
+ 'UK': 'United Kingdom',
  'US': 'US',
  'PS': 'West Bank and Gaza',
 }
