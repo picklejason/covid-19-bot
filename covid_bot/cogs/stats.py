@@ -252,7 +252,7 @@ class Stats(commands.Cog):
 		# Don't send images that don't exist
 		kwargs = {}
 		if img:
-			kwargs['file'] = discord.File(img, filename=f'image.png'),
+			kwargs['file'] = discord.File(img, filename=f'image.png')
 
 		await context.send(embed=self._embed_response(**response), **kwargs)
 

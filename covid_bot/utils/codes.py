@@ -310,7 +310,7 @@ COUNTRY_CODES_2 = {
     'AE': 'United Arab Emirates',
     # 'GB': 'UK',
     'UK': 'United Kingdom',
-    'US': 'USA',
+    'US': 'US',
     'UM': 'United States Minor Outlying Islands',
     'UY': 'Uruguay',
     'UZ': 'Uzbekistan',
