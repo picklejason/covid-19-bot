@@ -3,23 +3,35 @@ import logging
 import discord
 from discord.ext import commands
 
-from covid_bot.const import (
-    BOT_SHORT_NAME, HELP_DESCRIPTION, HELP_INFO, HELP_LEADERBOARD,
-    HELP_SAUCE, HELP_STAT
+from covid_bot.const import BOT_SHORT_NAME
+from covid_bot.utils.codes import EMOJI_CODES
+from covid_bot.utils.help import (
+    add_help, clear_help, get_help, list_aliases, list_commands
 )
 from covid_bot.utils.time import utcnow
 
 logger = logging.getLogger(__name__)
 
 BOT_INFO = (
- 'Additional information about the bot\n'
  f'Use **{BOT_SHORT_NAME} help** for more info on commands \n'
+)
+BOT_SAUCE = (
+ f'{EMOJI_CODES["github"]} '
+ '[Github](https://github.com/jwiggins/coronavirus-bot)'
+)
+HELP_DESCRIPTION = (
+ 'Data from [Corona Statistics](https://coronastatistics.live/)\n'
+)
+HELP_INFO = (
+ 'Return additional info about the bot such as server and user count'
 )
 
 
 class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        # Add help data for subcommands here
+        add_help('info', ['about'], HELP_INFO)
 
     def total_users(self):
         users = 0
@@ -29,28 +41,44 @@ class Help(commands.Cog):
 
     @commands.command(name='help', aliases=['h', 'commands'])
     @commands.cooldown(3, 10, commands.BucketType.user)
-    async def help(self, ctx):
-        embed = discord.Embed(
-            title='Bot Help',
-            description=HELP_DESCRIPTION,
-            colour=discord.Colour.red(),
-            timestamp=utcnow(),
-        )
-        embed.add_field(
-            name=f'```{BOT_SHORT_NAME} stat [country|all] [state]```',
-            value=HELP_STAT,
-            inline=False,
-        )
-        embed.add_field(
-            name=(f'```{BOT_SHORT_NAME} [leaderboard|lb] ```'),
-            value=HELP_LEADERBOARD,
-        )
-        embed.add_field(
-            name=f'```{BOT_SHORT_NAME} info```',
-            value=HELP_INFO,
-            inline=False,
-        )
-        embed.add_field(name='Bot Source Code', value=HELP_SAUCE)
+    async def help(self, ctx, command='__all'):
+        """ Give a little help
+        """
+        if command == '__all':
+            # No command specified
+            embed = discord.Embed(
+                title='Bot Help',
+                description=HELP_DESCRIPTION,
+                colour=discord.Colour.red(),
+                timestamp=utcnow(),
+            )
+            # Tell em what we've got
+            commands = ', '.join(f'`{c}`' for c in list_commands())
+            embed.add_field(
+                name=f'Usage: ```{BOT_SHORT_NAME} help <command>```',
+                value=f'Commands: {commands}',
+                inline=False,
+            )
+            embed.add_field(name='Bot Source Code', value=BOT_SAUCE)
+        else:
+            # Help for a specific command
+            embed = discord.Embed(
+                title=f'Help for "{command}":',
+                colour=discord.Colour.red(),
+                timestamp=utcnow(),
+            )
+            aliases = list_aliases(command)
+            if aliases:
+                embed.add_field(
+                    name='Aliases:',
+                    value=', '.join(f'`{a}`' for a in aliases),
+                    inline=False,
+                )
+            embed.add_field(
+                name='Description:',
+                value=get_help(command),
+                inline=False,
+            )
         await ctx.send(embed=embed)
 
     @commands.command(name='info', aliases=['about'])
@@ -58,7 +86,7 @@ class Help(commands.Cog):
     async def info(self, ctx):
         embed = discord.Embed(
             title='Bot Info',
-            description=BOT_INFO,
+            description=HELP_DESCRIPTION + BOT_INFO,
             colour=discord.Colour.red(),
             timestamp=utcnow()
         )
@@ -76,7 +104,7 @@ class Help(commands.Cog):
             name='Users',
             value=f'{users}'
         )
-        embed.add_field(name='Bot Source Code', value=HELP_SAUCE)
+        embed.add_field(name='Bot Source Code', value=BOT_SAUCE)
         await ctx.send(embed=embed)
 
     @commands.command()
@@ -114,6 +142,7 @@ class Help(commands.Cog):
     async def reload(self, ctx, extension=None):
         if extension is None:
             self.bot.unload()
+            clear_help()
             self.bot.load()
             await ctx.send('Reloaded All')
         else:

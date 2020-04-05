@@ -9,11 +9,15 @@ from discord.ext.commands import when_mentioned_or
 from discord.utils import find
 
 import covid_bot.cogs as cogs
-from covid_bot.const import (
-    BOT_LONG_NAME, BOT_SHORT_NAME, HELLO_MESSAGE, ICON_URL
-)
+from covid_bot.const import BOT_LONG_NAME, BOT_SHORT_NAME
 
 logger = logging.getLogger(__name__)
+
+HELLO_MESSAGE = (
+ f'Thanks for inviting me! | Use **{BOT_SHORT_NAME} help** for more info on '
+ 'commands'
+)
+ICON_URL = 'https://images.discordapp.net/avatars/683462722368700526/70c1743a2d87a44116f857a88bb107e0.png?size=512'  # noqa: E501
 MAIN_CHANNEL = os.environ.get('DISCORD_BOT_CHANNEL', 'general')
 
 
