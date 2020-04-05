@@ -6,6 +6,7 @@ import discord
 from discord.ext import commands
 
 from covid_bot.const import BOT_SHORT_NAME
+from covid_bot.utils.codes import normalize_country_name
 from covid_bot.utils.graphing import Graph
 from covid_bot.utils.help import add_help
 
@@ -219,18 +220,25 @@ class Stats(commands.Cog):
 		await context.send(embed=self._embed_response(**response))
 
 	@commands.command(name='plot')
-	async def plot(self, context, country='all'):
+	async def plot(self, context, country='all', *extra):
 		""" make and send the desired plot
 		"""
-		response = self._response_template(f'**COVID-19 Graph for "{country}"**')
-
 		if country is 'all':
+			response = self._response_template('**COVID-19 Graph for World**')
 			timeline = self._get_global_timeline()
 			img = self._plot_timeline(timeline)
 		else:
+			if extra:
+				# Build a single string for the country name
+				country = ' '.join((country,) + extra)
+			country = normalize_country_name(country)
+
+			response = self._response_template(
+				f'**COVID-19 Graph for "{country}"**'
+			)
 			try:
 				timeline = self._get_country_timeline(country)
-			except:
+			except Exception:
 				response['content'].append(
 					{
 						'name'	:	'error:',
@@ -241,10 +249,12 @@ class Stats(commands.Cog):
 			else:
 				img = self._plot_timeline(timeline)
 
-		await context.send(
-			file=discord.File(img, filename=f'image.png'),
-			embed=self._embed_response(**response)
-		)
+		# Don't send images that don't exist
+		kwargs = {}
+		if img:
+			kwargs['file'] = discord.File(img, filename=f'image.png'),
+
+		await context.send(embed=self._embed_response(**response), **kwargs)
 
 
 def setup(bot):

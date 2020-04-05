@@ -1,3 +1,17 @@
+# Magical Emoji codes used for embeds
+EMOJI_CODES = {
+    'github': '<:github:695974382761279498>',
+
+    # extra
+    'confirmed': '<:confirmed:689494326493184090>',
+    'deaths': '<:deaths:689489690101153800>',
+    'recovered': '<:recovered:689490988808274003>',
+    'activecases': '<:activecases:689494177733410861>',
+    'mortalityrate': '<:mortalityrate:689488380865544345>',
+    'recoveryrate': '<:recoveryrate:689492820125417521>',
+}
+
+
 US_STATE_CODES = {
     'AK': 'Alaska',
     'AL': 'Alabama',
@@ -294,7 +308,8 @@ COUNTRY_CODES_2 = {
     'UG': 'Uganda',
     'UA': 'Ukraine',
     'AE': 'United Arab Emirates',
-    'GB': 'UK',
+    # 'GB': 'UK',
+    'UK': 'United Kingdom',
     'US': 'USA',
     'UM': 'United States Minor Outlying Islands',
     'UY': 'Uruguay',
@@ -564,36 +579,34 @@ COUNTRY_CODES_3 = {
     'ZWE': 'Zimbabwe',
 }
 
-# Other names for countries
+# Other names for countries, mapped to alpha-2 code
 ALT_NAMES = {
-    'Czech Republic': 'Czechia',
+    'Czech Republic': 'CZ',
     'United Kingdom': 'UK',
-    'South Korea': 'S. Korea',
-    'Korea': 'S. Korea',
-    'United States': 'USA',
+    'Blighty': 'UK',
+    'United States': 'US',
+    'Merica': 'US',
+    'South Korea': 'KR',
+    'North Korea': 'KP',
+    'Korea': 'KR',
+    'Best Korea': 'KP',
 }
 
-JHU_NAMES = {
-    'USA': 'US',
-    'S. Korea': 'Korea, South',
-    'UK': 'United Kingdom',
-}
+# Reverse lookups
+US_STATE_CODES_REV = {v: k for k, v in US_STATE_CODES.items()}
+COUNTRY_CODES_2_REV = {v: k for k, v in COUNTRY_CODES_2.items()}
+COUNTRY_CODES_3_REV = {v: k for k, v in COUNTRY_CODES_3.items()}
 
-# Alternate lookups
-US_STATE_CODES_VALUES = set(US_STATE_CODES.values())
-COUNTRY_CODES_2_VALUES = set(COUNTRY_CODES_2.values())
-COUNTRY_CODES_3_VALUES = set(COUNTRY_CODES_3.values())
-JHU_NAMES_VALUES = set(JHU_NAMES.values())
+# Add the alternative names to the reverse country code lookup
+for name, code in ALT_NAMES.items():
+    COUNTRY_CODES_2_REV[name] = code
 
-# Magical Emoji codes used for embeds
-EMOJI_CODES = {
-    'github': '<:github:695974382761279498>',
 
-    # extra
-    'confirmed': '<:confirmed:689494326493184090>',
-    'deaths': '<:deaths:689489690101153800>',
-    'recovered': '<:recovered:689490988808274003>',
-    'activecases': '<:activecases:689494177733410861>',
-    'mortalityrate': '<:mortalityrate:689488380865544345>',
-    'recoveryrate': '<:recoveryrate:689492820125417521>',
-}
+def normalize_country_name(country):
+    """ Given a human-provided country name, try to convert it to something
+    we can query an endpoint with.
+    """
+    # Convert to the two-letter code (or keep, if not found)
+    code = COUNTRY_CODES_2_REV.get(country, country)
+    # Convert from two-letter to the official country name
+    return COUNTRY_CODES_2.get(code, code)
