@@ -333,10 +333,27 @@ ALT_NAMES = {
     'Blighty': 'UK',
     'United States': 'US',
     'Merica': 'US',
+    'United Arab Emirates': 'AE',
     'South Korea': 'KR',
     'North Korea': 'KP',
     'Korea': 'KR',
     'Best Korea': 'KP',
+}
+
+# XXX: https://api.coronastatistics.live/timeline/{country} has different
+# country names than https://api.coronastatistics.live/countries
+# Because of course it does.
+PLOT_NAMES = {
+ 'MM': 'Burma',
+ 'CG': 'Congo (Brazzaville)',
+ 'CD': 'Congo (Kinshasa)',
+ 'CI': "Cote d'Ivoire",
+ 'VA': 'Holy See',
+ 'KR': 'Korea, South',
+ 'VC': 'Saint Vincent and the Grenadines',
+ 'TW': 'Taiwan*',
+ 'US': 'US',
+ 'PS': 'West Bank and Gaza',
 }
 
 # Reverse lookups
@@ -350,9 +367,22 @@ for name, code in ALT_NAMES.items():
 
 def normalize_country_name(country):
     """ Given a human-provided country name, try to convert it to something
-    we can query an endpoint with.
+    we can query the countries endpoint with.
     """
     # Convert to the two-letter code (or keep, if not found)
     code = COUNTRY_CODES_2_REV.get(country, country)
+    # Convert from two-letter to the official country name
+    return COUNTRY_CODES_2.get(code, code)
+
+
+def normalize_plot_name(country):
+    """ Given a human-provided country name, try to convert it to something
+    we can query the timeline endpoint with.
+    """
+    # Convert to the two-letter code (or keep, if not found)
+    code = COUNTRY_CODES_2_REV.get(country, country)
+    if code in PLOT_NAMES:
+        return PLOT_NAMES[code]
+
     # Convert from two-letter to the official country name
     return COUNTRY_CODES_2.get(code, code)

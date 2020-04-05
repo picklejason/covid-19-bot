@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 
 from covid_bot.const import BOT_SHORT_NAME
-from covid_bot.utils.codes import normalize_country_name
+from covid_bot.utils.codes import normalize_country_name, normalize_plot_name
 from covid_bot.utils.formatting import stats_formatter, value_formatter
 from covid_bot.utils.graphing import Graph
 from covid_bot.utils.help import add_help
@@ -179,13 +179,17 @@ class Stats(commands.Cog):
 	#########################################################
 
 	@commands.command(name='stats', aliases=['stat'])
-	async def stats(self, context, location: str):
+	async def stats(self, context, *args):
 		""" embed stats for a given country / all countries into discord.Embed
 		object and send to channel
 		"""
-		response = self._response_template(f'**COVID-19 stats for {location.title()}**')
+		location = ' '.join(args)
+		response = self._response_template(
+			f'**COVID-19 stats for {location}**'
+		)
 		try:
-			info = self._get_country_today(location)
+			normalized = normalize_country_name(location)
+			info = self._get_country_today(normalized)
 		except Exception as e:
 			response['content'].append({'name': 'error', 'value': str(e)})
 		else:
@@ -245,12 +249,12 @@ class Stats(commands.Cog):
 			timeline = self._get_global_timeline()
 			img = self._plot_timeline(timeline, log=log_plot)
 		else:
-			country = normalize_country_name(country)
 			response = self._response_template(
 				f'**COVID-19 Graph for "{country}"**'
 			)
 			try:
-				timeline = self._get_country_timeline(country)
+				normalized = normalize_plot_name(country)
+				timeline = self._get_country_timeline(normalized)
 			except Exception:
 				response['content'].append(
 					{
