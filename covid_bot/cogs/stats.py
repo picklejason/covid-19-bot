@@ -15,7 +15,8 @@ API_GATEWAY = "https://api.coronastatistics.live/"
 # country dict keys
 C_KEYS = {
 	'cases', 'todayCases', 'deaths', 'todayDeaths', 'recovered', 'active',
-	'critical', 'casesPerOneMillion', 'deathsPerOneMillion'
+	'critical', 'casesPerOneMillion', 'deathsPerOneMillion',
+	'tests', 'testsPerOneMillion'
 }
 
 HELP_LEADERBOARD = (
@@ -214,7 +215,7 @@ class Stats(commands.Cog):
 		if sorting in C_KEYS:
 			countries = self._get_top_countries(sorted_by=sorting)
 			info = '\n'.join(
-				f'**{i+1}: {k["country"]}** - {value_formatter(k[sorting])}'
+				f'**{i+1}: {k["country"]}** - {value_formatter('', k[sorting])}'
 				for i, k in enumerate(countries)
 			)
 			response['content'].append(
