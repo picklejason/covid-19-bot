@@ -15,33 +15,34 @@ API_GATEWAY = "https://api.coronastatistics.live/"
 # country dict keys
 C_KEYS = {
 	'cases', 'todayCases', 'deaths', 'todayDeaths', 'recovered', 'active',
-	'critical', 'casesPerOneMillion', 'deathsPerOneMillion'
+	'critical', 'casesPerOneMillion', 'deathsPerOneMillion',
+	'tests', 'testsPerOneMillion'
 }
 
+LB_QUALIFIERS = ', '.join(f'`{key}`' for key in C_KEYS)
 HELP_LEADERBOARD = (
  'Show a "leaderboard" of countries with the highest numbers of '
  'cases/deaths/etc\n\n'
  f'__Example:__ **{BOT_SHORT_NAME} leaderboard**\n\n'
  'If you want to get fancy, you can add a sorting qualifier to the end of '
- 'the command. Available qualifiers are: `cases`, `todayCases`, `deaths`, '
- '`todayDeaths`, `recovered`, `active`, `critical`, `casesPerOneMillion`, '
- '`deathsPerOneMillion`.\n\n'
- f'__Example:__ **{BOT_SHORT_NAME} leaderboard deaths**'
+ f'the command. Available qualifiers are: {LB_QUALIFIERS}.\n\n'
+ f'__Example:__ **{BOT_SHORT_NAME} leaderboard todayCases**'
+)
+HELP_PLOT = (
+ 'Show a nice plot for the world or a specific country. \n\n'
+ 'As with the `stats` command, the country can be specified using the full '
+ 'name or a two letter ISO 3166-1 code.\n\n'
+ f'__Example:__ **{BOT_SHORT_NAME} plot China** '
+ f'| **{BOT_SHORT_NAME} plot CN**\n\n'
+ 'For a plot with a logarithmic Y-axis scale, add `log` or `logarithmic` to '
+ 'the command:\n\n'
+ f'__Example:__ **{BOT_SHORT_NAME} plot log USA** '
 )
 HELP_STATS = (
- 'Show **Confirmed** (new cases), **Deaths** (new deaths) and **Recovered**\n'
- '•For any country you may type the **full name** or '
- '**[ISO 3166-1 codes](https://en.wikipedia.org/wiki/ISO_3166-1)**\n'
+ 'Show aggregate stats for a country \n\n'
+ 'For any country you may type the **full name** or '
+ '**[ISO 3166-1 alpha-2 codes](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)**\n'  # noqa: E501
  f'__Example:__ **{BOT_SHORT_NAME} stat Italy** | **{BOT_SHORT_NAME} stat IT**'
- f' | **{BOT_SHORT_NAME} stat ITA**\n'
- '•If the country or state\'s full name is two words, enclose them in '
- '**quotation marks**\n'
- f'__Example:__ **{BOT_SHORT_NAME} stat "South Korea"** | '
- f'**{BOT_SHORT_NAME} stat US "New York"**\n'
- '•If you would like stats on a specific **state (full name or abbreviated)** '
- 'in the US, put it after the country name\n'
- f'__Example:__ **{BOT_SHORT_NAME} stat US California** or '
- f'**{BOT_SHORT_NAME} stat US CA**'
 )
 
 
@@ -69,6 +70,7 @@ class Stats(commands.Cog):
 		add_help(
 			'leaderboard', ['lb', 'leadboard', 'lboard'], HELP_LEADERBOARD
 		)
+		add_help('plot', [], HELP_PLOT)
 		add_help('stats', ['stat'], HELP_STATS)
 
 		# create requests session
@@ -214,7 +216,7 @@ class Stats(commands.Cog):
 		if sorting in C_KEYS:
 			countries = self._get_top_countries(sorted_by=sorting)
 			info = '\n'.join(
-				f'**{i+1}: {k["country"]}** - {value_formatter(k[sorting])}'
+				f'**{i+1}: {k["country"]}** - {value_formatter("", k[sorting])}'
 				for i, k in enumerate(countries)
 			)
 			response['content'].append(

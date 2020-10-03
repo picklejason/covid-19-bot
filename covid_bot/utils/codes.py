@@ -352,6 +352,7 @@ PLOT_NAMES = {
  'KR': 'Korea, South',
  'VC': 'Saint Vincent and the Grenadines',
  'TW': 'Taiwan*',
+ 'AE': 'United Arab Emirates',
  'UK': 'United Kingdom',
  'US': 'US',
  'PS': 'West Bank and Gaza',
@@ -359,7 +360,7 @@ PLOT_NAMES = {
 
 # Reverse lookups
 US_STATE_CODES_REV = {v: k for k, v in US_STATE_CODES.items()}
-COUNTRY_CODES_2_REV = {v: k for k, v in COUNTRY_CODES_2.items()}
+COUNTRY_CODES_2_REV = {v.lower(): k for k, v in COUNTRY_CODES_2.items()}
 
 # Add the alternative names to the reverse country code lookup
 for name, code in ALT_NAMES.items():
@@ -371,7 +372,7 @@ def normalize_country_name(country):
     we can query the countries endpoint with.
     """
     # Convert to the two-letter code (or keep, if not found)
-    code = COUNTRY_CODES_2_REV.get(country, country)
+    code = COUNTRY_CODES_2_REV.get(country.lower(), country)
     # Convert from two-letter to the official country name
     return COUNTRY_CODES_2.get(code, code)
 
@@ -381,7 +382,7 @@ def normalize_plot_name(country):
     we can query the timeline endpoint with.
     """
     # Convert to the two-letter code (or keep, if not found)
-    code = COUNTRY_CODES_2_REV.get(country, country)
+    code = COUNTRY_CODES_2_REV.get(country.lower(), country)
     if code in PLOT_NAMES:
         return PLOT_NAMES[code]
 
